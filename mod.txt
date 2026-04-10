@@ -5,6 +5,7 @@ version="1.0.1"
 
 [autoload]
 HoldBreathBoot="res://HoldBreath/Main.gd"
+HoldBreathConfig="res://HoldBreath/Config.gd"
 
 [updates]
 modworkshop=55938

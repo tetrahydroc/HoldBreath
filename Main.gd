@@ -1,6 +1,7 @@
 extends Node
 
 var gameData = preload("res://Resources/GameData.tres")
+var _settings = preload("res://HoldBreath/HoldBreathSettings.tres")
 var _was_holding = false
 
 func _ready():
@@ -17,13 +18,19 @@ func overrideScript(modded_path: String):
 	var parentScript = script.get_base_script()
 	script.take_over_path(parentScript.resource_path)
 
-# Directly manipulate Noise nodes every physics frame
+func _is_holding() -> bool:
+	if !gameData.isAiming or gameData.armStamina <= 5.0:
+		return false
+	if InputMap.has_action("hb_holdKey"):
+		return Input.is_action_pressed("hb_holdKey")
+	return Input.is_key_pressed(_settings.holdKey)
+
 func _physics_process(delta):
 	var scene = get_tree().current_scene
 	if !scene:
 		return
 
-	var holding = gameData.isAiming and Input.is_action_pressed("sprint") and gameData.armStamina > 5.0
+	var holding = _is_holding()
 
 	var camera = scene.get_node_or_null("Core/Camera/Manager")
 	if !camera:
@@ -42,7 +49,6 @@ func _physics_process(delta):
 				noise_node.rotation.z = lerp(noise_node.rotation.z, 0.0, delta * 6.0)
 				break
 	elif _was_holding:
-		# Snap sway back to normal values so it doesn't linger
 		_was_holding = false
 		for child in camera.get_children():
 			var noise_node = child.get_node_or_null("Handling/Sway/Noise")

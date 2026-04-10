@@ -1,16 +1,19 @@
 extends "res://Scripts/Recoil.gd"
 
-# Reduce sway to 20% while holding breath
 const HOLD_BREATH_SWAY_MULT = 0.2
+var _settings = preload("res://HoldBreath/HoldBreathSettings.tres")
+
+func _is_holding() -> bool:
+	if !gameData.isAiming or gameData.armStamina <= 5.0:
+		return false
+	if InputMap.has_action("hb_holdKey"):
+		return Input.is_action_pressed("hb_holdKey")
+	return Input.is_key_pressed(_settings.holdKey)
 
 func CalculateRecoil(delta):
-	var holding = gameData.isAiming and Input.is_action_pressed("sprint") and gameData.armStamina > 5.0
-
-	if holding:
-		# Dampen existing sway much faster
+	if _is_holding():
 		currentRotation = lerp(currentRotation, Vector3.ZERO, delta * data.rotationRecovery * 5.0)
 		rotation = lerp(rotation, currentRotation * HOLD_BREATH_SWAY_MULT, delta * data.rotationPower)
-
 		currentKick = lerp(currentKick, Vector3.ZERO, delta * data.kickRecovery * 3.0)
 		position = lerp(position, currentKick * HOLD_BREATH_SWAY_MULT, delta * data.kickPower)
 	else:
@@ -18,7 +21,6 @@ func CalculateRecoil(delta):
 
 func ApplyRecoil():
 	super()
-	# If holding breath during a shot, reduce the recoil applied
-	if gameData.isAiming and Input.is_action_pressed("sprint") and gameData.armStamina > 5.0:
+	if _is_holding():
 		currentRotation *= 0.5
 		currentKick *= 0.5
