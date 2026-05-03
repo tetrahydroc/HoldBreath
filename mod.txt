@@ -1,11 +1,15 @@
 [mod]
 name="Hold Breath"
 id="hold-breath"
-version="1.0.3"
+version="2.0.0"
 
 [autoload]
 HoldBreathBoot="res://HoldBreath/Main.gd"
 HoldBreathConfig="res://HoldBreath/Config.gd"
+
+[hooks]
+"res://Scripts/Recoil.gd" = "CalculateRecoil, ApplyRecoil"
+"res://Scripts/Character.gd" = "Stamina"
 
 [updates]
 modworkshop=55938

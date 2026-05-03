@@ -38,4 +38,3 @@ func _ready() -> void:
 
 func _on_config_updated(_config: ConfigFile):
 	settings.holdKey = _config.get_value("Keycode", "hb_holdKey")["value"]
-	print("Hold Breath: Keybind updated to " + str(settings.holdKey))
